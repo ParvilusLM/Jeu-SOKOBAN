@@ -19,7 +19,7 @@ Controleur::Controleur(sf::RenderWindow &fenetre):m_fenetre(0),m_decor(0),m_info
     m_sPerdu.setPosition(200,150);
 }
 
-
+        
         void Controleur::debutJeu()
         {
             chargementNiveau(niveau-1);
@@ -96,7 +96,7 @@ Controleur::Controleur(sf::RenderWindow &fenetre):m_fenetre(0),m_decor(0),m_info
                         return 1;
                     }
 
-
+        
                             void Controleur::changementNiveau(int niveau)
                             {
                                 m_capturesJeu.clear();
@@ -417,7 +417,7 @@ void Controleur::retourSurCoups()
         m_personnage->setApparenceP(m_capturesJeu.at(indic_dern_el).posPersonnage);
 
         m_capturesJeu.pop_back();
-
+        
     }
 }
 
