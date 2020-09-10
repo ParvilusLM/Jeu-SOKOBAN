@@ -1,5 +1,6 @@
 #include "personnage.h"
 
+using namespace std;
 
 Personnage::Personnage(sf::RenderWindow &fenetre):m_fenetre(0)
 {

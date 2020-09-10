@@ -1,5 +1,6 @@
 #include "menu.h"
 
+using namespace std;
 
 Menu::Menu(sf::RenderWindow &fenetre):m_fenetre(0)
 {

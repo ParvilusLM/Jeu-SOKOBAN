@@ -1,5 +1,7 @@
 #include "info.h"
 
+using namespace std;
+
 
 Info::Info(sf::RenderWindow &fenetre):m_fenetre(0)
 {

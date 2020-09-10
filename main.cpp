@@ -153,7 +153,6 @@ int main()
 
         }
 
-
          fenetre.clear(Color(179,189,155));
 
          if(jeuEnCours)
@@ -164,7 +163,6 @@ int main()
          {
              controleurJ.afficheMenu();
          }
-
 
          //affiche tout a l'ecran
          fenetre.display();

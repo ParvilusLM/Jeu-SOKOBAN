@@ -1,5 +1,6 @@
 #include "controleur.h"
 
+using namespace std;
 
 Controleur::Controleur(sf::RenderWindow &fenetre):m_fenetre(0),m_decor(0),m_info(0),m_personnage(0),m_menu(0)
 {
