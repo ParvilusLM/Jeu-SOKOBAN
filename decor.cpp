@@ -186,12 +186,10 @@ std::vector<Caisse> Decor::getCaisses()
 }
 
 
-std::vector<Caisse> Decor::setCaisses(std::vector<Caisse> caisses)
+void Decor::setCaisses(std::vector<Caisse> caisses)
 {
-    //std::cout<<"Entree dans la fonction setCaisses"<<std::endl;
     m_caisses.clear();
     m_caisses=caisses;
-    //std::cout<<"Sortie dans la fonction setCaisses"<<std::endl;
 }
 
 void Decor::afficheDecor()

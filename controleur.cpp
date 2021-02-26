@@ -21,185 +21,185 @@ Controleur::Controleur(sf::RenderWindow &fenetre):m_fenetre(0),m_decor(0),m_info
 }
 
 
-        void Controleur::debutJeu()
+void Controleur::debutJeu()
+{
+    chargementNiveau(niveau-1);
+    m_decor->chargementDecor();
+    m_personnage->positionP();
+    m_info->initInfo();
+    demarrerHorl();
+}
+
+
+int Controleur::chargementNiveau(int noNiveau)
+{
+    FILE* fichier =NULL;
+    char ligneFichier[NB_BLOCS_LARGEUR*NB_BLOCS_HAUTEUR+1] = {0};
+    int i=0, j=0,caractereLu=0,nbNiveau=0,noLigneChoisi=0;
+
+    fichier=fopen("donnees/niveaux.lvl","r");
+    if(fichier==NULL)
+        return 0;
+
+
+       do
+       {
+           caractereLu = fgetc(fichier);
+        if (caractereLu == '\n')
+            nbNiveau++;
+       }while(caractereLu != EOF);
+
+       noLigneChoisi=noNiveau;
+
+       rewind(fichier);
+
+       while (noLigneChoisi > 0)
+    {
+        caractereLu = fgetc(fichier);
+        if (caractereLu == '\n')
+            noLigneChoisi--;
+    }
+
+    fgets(ligneFichier, 200, fichier);
+
+    for (i = 0 ; i < NB_BLOCS_LARGEUR ; i++)
         {
-            chargementNiveau(niveau-1);
-            m_decor->chargementDecor();
-            m_personnage->positionP();
-            m_info->initInfo();
-            demarrerHorl();
+            for (j = 0 ; j < NB_BLOCS_HAUTEUR ; j++)
+            {
+                switch (ligneFichier[(i * NB_BLOCS_LARGEUR) + j])
+                {
+                    case '0':
+                        carte[j][i] = 0;
+                        break;
+                    case '1':
+                        carte[j][i] = 1;
+                        break;
+                    case '2':
+                        carte[j][i] = 2;
+                        break;
+                    case '3':
+                        carte[j][i] = 3;
+                        break;
+                    case '4':
+                        carte[j][i] = 4;
+                        break;
+                    case '5':
+                        carte[j][i]=5;
+                        break;
+                    case '6':
+                        carte[j][i]=6;
+                        break;
+                }
+            }
         }
 
-
-                    int Controleur::chargementNiveau(int noNiveau)
-                    {
-                        FILE* fichier =NULL;
-                        char ligneFichier[NB_BLOCS_LARGEUR*NB_BLOCS_HAUTEUR+1] = {0};
-                        int i=0, j=0,caractereLu=0,nbNiveau=0,noLigneChoisi=0;
-
-                        fichier=fopen("donnees/niveaux.lvl","r");
-                        if(fichier==NULL)
-                            return 0;
+    fclose(fichier);
+    return 1;
+}
 
 
-                           do
-                           {
-                               caractereLu = fgetc(fichier);
-                            if (caractereLu == '\n')
-                                nbNiveau++;
-                           }while(caractereLu != EOF);
+void Controleur::changementNiveau(int niveau)
+{
+    m_capturesJeu.clear();
+    chargementNiveau(niveau);
+    m_decor->chargementDecor();
+    m_personnage->positionP();
+}
 
-                           noLigneChoisi=noNiveau;
-
-                           rewind(fichier);
-
-                           while (noLigneChoisi > 0)
-                        {
-                            caractereLu = fgetc(fichier);
-                            if (caractereLu == '\n')
-                                noLigneChoisi--;
-                        }
-
-                        fgets(ligneFichier, 200, fichier);
-
-                        for (i = 0 ; i < NB_BLOCS_LARGEUR ; i++)
-                            {
-                                for (j = 0 ; j < NB_BLOCS_HAUTEUR ; j++)
-                                {
-                                    switch (ligneFichier[(i * NB_BLOCS_LARGEUR) + j])
-                                    {
-                                        case '0':
-                                            carte[j][i] = 0;
-                                            break;
-                                        case '1':
-                                            carte[j][i] = 1;
-                                            break;
-                                        case '2':
-                                            carte[j][i] = 2;
-                                            break;
-                                        case '3':
-                                            carte[j][i] = 3;
-                                            break;
-                                        case '4':
-                                            carte[j][i] = 4;
-                                            break;
-                                        case '5':
-                                            carte[j][i]=5;
-                                            break;
-                                        case '6':
-                                            carte[j][i]=6;
-                                            break;
-                                    }
-                                }
-                            }
-
-                        fclose(fichier);
-                        return 1;
-                    }
-
-
-                            void Controleur::changementNiveau(int niveau)
-                            {
-                                m_capturesJeu.clear();
-                                chargementNiveau(niveau);
-                                m_decor->chargementDecor();
-                                m_personnage->positionP();
-                            }
-
-                    void Controleur::gestionDeplPers(int directionP)
-                    {
-                        if(!collisionPM(directionP) && !collisionPC(directionP))
-                        {
-                            m_personnage->deplacementP(directionP);
-                            m_info->compteurDeplacementP();
-                        }
-                        else
-                        {
-                            if(!collisionPM(directionP) && collisionPC(directionP) && deplCaissePoss(directionP))
-                            {
-
-                                CaptureJeu nvlCapture;
-                                nvlCapture.caisses=m_decor->getCaisses();
-                                nvlCapture.posPersonnage=m_personnage->getApparenceP().getPosition();
-
-                                m_capturesJeu.insert(m_capturesJeu.end(),nvlCapture);
-
-                                sf::Vector2f posCaisse;
-
-                                if(directionP==GAUCHE)
-                                {
-                                    posCaisse.x=m_personnage->getApparenceP().getPosition().x-TAILLE_BLOC;
-                                    posCaisse.y=m_personnage->getApparenceP().getPosition().y;
-                                }
-                                else if(directionP==DROITE)
-                                {
-                                    posCaisse.x=m_personnage->getApparenceP().getPosition().x+TAILLE_BLOC;
-                                    posCaisse.y=m_personnage->getApparenceP().getPosition().y;
-                                }
-                                else if(directionP==HAUT)
-                                {
-                                    posCaisse.x=m_personnage->getApparenceP().getPosition().x;
-                                    posCaisse.y=m_personnage->getApparenceP().getPosition().y-TAILLE_BLOC;
-                                }
-                                else
-                                {
-                                    posCaisse.x=m_personnage->getApparenceP().getPosition().x;
-                                    posCaisse.y=m_personnage->getApparenceP().getPosition().y+TAILLE_BLOC;
-                                }
-
-                                m_decor->deplacementCaisse(posCaisse,directionP);
-                                m_personnage->deplacementP(directionP);
-                                m_info->compteurDeplacementP();
-
-
-
-                            }
-
-
-                        }
-
-                    }
-
-        bool Controleur::collisionPM(int directionP)
+void Controleur::gestionDeplPers(int directionP)
+{
+    if(!collisionPM(directionP) && !collisionPC(directionP))
+    {
+        m_personnage->deplacementP(directionP);
+        m_info->compteurDeplacementP();
+    }
+    else
+    {
+        if(!collisionPM(directionP) && collisionPC(directionP) && deplCaissePoss(directionP))
         {
-            bool collision=false;
 
-            sf::Vector2f futurPosP;
+            CaptureJeu nvlCapture;
+            nvlCapture.caisses=m_decor->getCaisses();
+            nvlCapture.posPersonnage=m_personnage->getApparenceP().getPosition();
+
+            m_capturesJeu.insert(m_capturesJeu.end(),nvlCapture);
+
+            sf::Vector2f posCaisse;
 
             if(directionP==GAUCHE)
             {
-                futurPosP.x=m_personnage->getApparenceP().getPosition().x-TAILLE_BLOC;
-                futurPosP.y=m_personnage->getApparenceP().getPosition().y;
+                posCaisse.x=m_personnage->getApparenceP().getPosition().x-TAILLE_BLOC;
+                posCaisse.y=m_personnage->getApparenceP().getPosition().y;
             }
             else if(directionP==DROITE)
             {
-                futurPosP.x=m_personnage->getApparenceP().getPosition().x+TAILLE_BLOC;
-                futurPosP.y=m_personnage->getApparenceP().getPosition().y;
+                posCaisse.x=m_personnage->getApparenceP().getPosition().x+TAILLE_BLOC;
+                posCaisse.y=m_personnage->getApparenceP().getPosition().y;
             }
             else if(directionP==HAUT)
             {
-                futurPosP.x=m_personnage->getApparenceP().getPosition().x;
-                futurPosP.y=m_personnage->getApparenceP().getPosition().y-TAILLE_BLOC;
+                posCaisse.x=m_personnage->getApparenceP().getPosition().x;
+                posCaisse.y=m_personnage->getApparenceP().getPosition().y-TAILLE_BLOC;
             }
             else
             {
-                futurPosP.x=m_personnage->getApparenceP().getPosition().x;
-                futurPosP.y=m_personnage->getApparenceP().getPosition().y+TAILLE_BLOC;
+                posCaisse.x=m_personnage->getApparenceP().getPosition().x;
+                posCaisse.y=m_personnage->getApparenceP().getPosition().y+TAILLE_BLOC;
             }
 
-            int compt=0;
-            while(compt<m_decor->getMurs2().size())
-            {
-                if(m_decor->getMurs2().at(compt).getPosition().x==futurPosP.x && m_decor->getMurs2().at(compt).getPosition().y==futurPosP.y)
-                {
-                    collision=true;
-                }
-                compt++;
-            }
+            m_decor->deplacementCaisse(posCaisse,directionP);
+            m_personnage->deplacementP(directionP);
+            m_info->compteurDeplacementP();
 
-            return collision;
+
 
         }
+
+
+    }
+
+}
+
+bool Controleur::collisionPM(int directionP)
+{
+    bool collision=false;
+
+    sf::Vector2f futurPosP;
+
+    if(directionP==GAUCHE)
+    {
+        futurPosP.x=m_personnage->getApparenceP().getPosition().x-TAILLE_BLOC;
+        futurPosP.y=m_personnage->getApparenceP().getPosition().y;
+    }
+    else if(directionP==DROITE)
+    {
+        futurPosP.x=m_personnage->getApparenceP().getPosition().x+TAILLE_BLOC;
+        futurPosP.y=m_personnage->getApparenceP().getPosition().y;
+    }
+    else if(directionP==HAUT)
+    {
+        futurPosP.x=m_personnage->getApparenceP().getPosition().x;
+        futurPosP.y=m_personnage->getApparenceP().getPosition().y-TAILLE_BLOC;
+    }
+    else
+    {
+        futurPosP.x=m_personnage->getApparenceP().getPosition().x;
+        futurPosP.y=m_personnage->getApparenceP().getPosition().y+TAILLE_BLOC;
+    }
+
+    int compt=0;
+    while(compt<m_decor->getMurs2().size())
+    {
+        if(m_decor->getMurs2().at(compt).getPosition().x==futurPosP.x && m_decor->getMurs2().at(compt).getPosition().y==futurPosP.y)
+        {
+            collision=true;
+        }
+        compt++;
+    }
+
+    return collision;
+
+}
 
 bool Controleur::collisionPC(int directionP)
 {
@@ -418,22 +418,21 @@ void Controleur::retourSurCoups()
         m_personnage->setApparenceP(m_capturesJeu.at(indic_dern_el).posPersonnage);
 
         m_capturesJeu.pop_back();
-
     }
 }
 
-        void Controleur::retourMenu()
-        {
-            m_menu->retourMenuP();
-            jeuEnCours=false;
-            niveau=1;
+void Controleur::retourMenu()
+{
+    m_menu->retourMenuP();
+    jeuEnCours=false;
+    niveau=1;
 
-        }
+}
 
-                    Controleur::~Controleur()
-                    {
-                        delete m_decor;
-                        delete m_info;
-                        delete m_personnage;
-                        delete m_menu;
-                    }
+Controleur::~Controleur()
+{
+    delete m_decor;
+    delete m_info;
+    delete m_personnage;
+    delete m_menu;
+}

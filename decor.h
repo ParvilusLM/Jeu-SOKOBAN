@@ -19,7 +19,7 @@ public:
     void afficheDecor();
     std::vector<sf::Sprite> getMurs2();
     std::vector<Caisse> getCaisses();
-    std::vector<Caisse> setCaisses(std::vector<Caisse> caisses);
+    void setCaisses(std::vector<Caisse> caisses);
 
 
 
